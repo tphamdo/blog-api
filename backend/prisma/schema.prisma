@@ -14,33 +14,36 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
+  id       String    @id @default(uuid())
+  username String    @unique
   posts    Blog[]
-  role     Role   @default(USER)
+  role     Role      @default(USER)
+  Comment  Comment[]
 
   @@map("users")
 }
 
 model Blog {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   title       String
   content     String
   published   Boolean   @default(false)
   publishedAt DateTime?
   author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    Int
+  authorId    String
   comments    Comment[]
 
   @@map("blogs")
 }
 
 model Comment {
-  id       Int      @id @default(autoincrement())
+  id       String   @id @default(uuid())
   content  String
   postedAt DateTime @default(now())
   blog     Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  blogId   Int
+  blogId   String
+  author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
 
   @@map("comments")
 }
@@ -50,4 +53,3 @@ enum Role {
   BLOGGER
   ADMIN
 }
-
