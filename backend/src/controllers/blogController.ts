@@ -27,5 +27,3 @@ export async function blogGet(req: Request, res: Response): Promise<void> {
   if (!blog) res.send('blog not found');
   else res.send(`${JSON.stringify(blog, null, 4)}`);
 }
-
-

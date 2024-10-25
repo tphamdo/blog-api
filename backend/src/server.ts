@@ -4,6 +4,9 @@ dotenv.config();
 import express from 'express';
 import L from './lib/logger';
 import routes from './routes/routes';
+import './config/passport';
+import * as userController from './controllers/userController';
+import { verifyToken } from './lib/jwt';
 
 const app = express();
 app.use(express.json());
@@ -14,7 +17,10 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/blogs', routes.blogs);
-app.use('/users', routes.users);
+app.post('/register', userController.registerPost);
+app.post('/login', userController.loginPost);
+
+app.get('/protected', verifyToken, userController.protectedGet);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => L.log(`Listening on port: ${PORT}`));
