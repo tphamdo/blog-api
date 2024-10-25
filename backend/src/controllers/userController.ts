@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import L from '../lib/logger';
 import * as db from '../db/queries';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
@@ -22,10 +21,9 @@ export async function registerPost(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const token = jwt.sign(user, process.env.PRIVATE_KEY, { expiresIn: '30s' });
-  L.log(`${JSON.stringify(user, null, 4)}`);
-  L.log(token);
-  L.log(`${JSON.stringify(token, null, 4)}`);
+  const token = jwt.sign(user, process.env.PRIVATE_KEY, {
+    expiresIn: process.env.EXPIRES_IN || '30s',
+  });
   res.json({ token });
 }
 
@@ -49,7 +47,7 @@ export async function loginPost(req: Request, res: Response): Promise<void> {
         return;
       }
       const token = jwt.sign(user, process.env.PRIVATE_KEY, {
-        expiresIn: '30s',
+        expiresIn: process.env.EXPIRES_IN || '30s',
       });
 
       res.json({ token });
