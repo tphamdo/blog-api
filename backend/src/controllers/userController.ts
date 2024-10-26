@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as db from '../db/queries';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
+import L from '../lib/logger';
 
 export async function registerPost(req: Request, res: Response): Promise<void> {
   const { username, password } = req.body;
@@ -15,15 +16,20 @@ export async function registerPost(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const user = await db.addUser(username, password);
+  let user = await db.addUser(username, password);
   if (!user) {
     res.status(500).send('Could not add user');
     return;
   }
 
-  const token = jwt.sign(user, process.env.PRIVATE_KEY, {
-    expiresIn: process.env.EXPIRES_IN || '30s',
+  const reducedUser = { id: user.id, username: user.username };
+  const token = jwt.sign(reducedUser, process.env.PRIVATE_KEY, {
+    expiresIn: process.env.EXPIRES_IN || '60s',
   });
+
+  L.log(`${JSON.stringify(user, null, 4)}`);
+  L.log(`${JSON.stringify(token, null, 4)}`);
+
   res.json({ token });
 }
 
@@ -46,10 +52,14 @@ export async function loginPost(req: Request, res: Response): Promise<void> {
         res.status(500).send('Internal Server Error');
         return;
       }
-      const token = jwt.sign(user, process.env.PRIVATE_KEY, {
-        expiresIn: process.env.EXPIRES_IN || '30s',
+
+      const reducedUser = { id: user.id, username: user.username };
+      const token = jwt.sign(reducedUser, process.env.PRIVATE_KEY, {
+        expiresIn: process.env.EXPIRES_IN || '60s',
       });
 
+      L.log(`${JSON.stringify(user, null, 4)}`);
+      L.log(`${JSON.stringify(token, null, 4)}`);
       res.json({ token });
     },
   )(req, res);
