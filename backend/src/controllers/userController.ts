@@ -7,18 +7,18 @@ import L from '../lib/logger';
 export async function registerPost(req: Request, res: Response): Promise<void> {
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).send('Username and password required.');
+    res.status(400).json({ message: 'Username and password required.' });
     return;
   }
 
   if (!process.env.PRIVATE_KEY) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ message: 'Internal Server Error' });
     return;
   }
 
   let user = await db.addUser(username, password);
   if (!user) {
-    res.status(500).send('Could not add user');
+    res.status(409).json({ message: 'Username already exists' });
     return;
   }
 
@@ -36,7 +36,7 @@ export async function registerPost(req: Request, res: Response): Promise<void> {
 export async function loginPost(req: Request, res: Response): Promise<void> {
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).send('Username and password required.');
+    res.status(400).json({ message: 'Username and password required.' });
     return;
   }
   passport.authenticate(
@@ -44,12 +44,12 @@ export async function loginPost(req: Request, res: Response): Promise<void> {
     {},
     (err: any, user?: Express.User | false | null) => {
       if (err || !user) {
-        res.status(401).send('Incorrect username/password');
+        res.status(401).json({ message: 'Incorrect username/password' });
         return;
       }
 
       if (!process.env.PRIVATE_KEY) {
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ message: 'Internal Server Error' });
         return;
       }
 
@@ -66,5 +66,5 @@ export async function loginPost(req: Request, res: Response): Promise<void> {
 }
 
 export async function protectedGet(req: Request, res: Response): Promise<void> {
-  res.send('got inside protected route');
+  res.json({ message: 'got inside protected route' });
 }
