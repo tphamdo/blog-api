@@ -2,13 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import LoginPage from './LoginPage.tsx'
+import RegisterPage from './RegisterPage.tsx'
 import HomePage from './HomePage.tsx'
+import ProtectedPage from './ProtectedPage.tsx'
 import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import { AuthContextProvider } from './AuthContext';
+import AuthProvider from './AuthProvider';
 
 const router = createBrowserRouter([
   {
@@ -16,8 +18,16 @@ const router = createBrowserRouter([
     element: <HomePage />
   },
   {
+    path: "/protected",
+    element: <ProtectedPage />
+  },
+  {
     path: "/login",
     element: <LoginPage />
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />
   },
   {
     path: "*",
@@ -27,8 +37,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthContextProvider>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </AuthContextProvider>
+    </AuthProvider>
   </StrictMode>,
 )

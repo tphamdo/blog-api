@@ -15,8 +15,12 @@ import { useAuth } from '../AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
-  username: z.string(),
-  password: z.string()
+  username: z.string().min(3, {
+    message: 'Username must be at least 3 characters.',
+  }),
+  password: z.string().min(3, {
+    message: 'Password must be at least 4 characters.',
+  }),
 });
 
 export default function ProfileForm() {
@@ -34,7 +38,7 @@ export default function ProfileForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch('http://localhost:3000/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +52,8 @@ export default function ProfileForm() {
       if (json.token) saveToken(json.token);
       navigate('/protected');
     } else {
-      setError('Invalid Credentials');
+      if (res.status === 409)
+        setError('That username already exists');
     }
   }
 
@@ -64,7 +69,7 @@ export default function ProfileForm() {
 
   return (
     <div className="w-72">
-      <h1 className="text-xl font-bold mb-3">Login</h1>
+      <h1 className="text-xl font-bold mb-3">Register</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 text-inherit flex flex-col">
           <FormField
