@@ -11,3 +11,4 @@ function debug(...args: any[]) {
 }
 
 export default { log, error, debug };
+

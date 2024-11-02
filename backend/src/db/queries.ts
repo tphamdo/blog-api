@@ -21,10 +21,20 @@ export async function addUser(
   }
 }
 
-export async function getUser(username: string): Promise<User | null> {
+export async function getUserByUsername(username: string): Promise<User | null> {
   const user = await prisma.user.findUnique({
     where: {
       username,
+    },
+  });
+
+  return user;
+}
+
+export async function getUserById(userId: string): Promise<User | null> {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
     },
   });
 
@@ -56,9 +66,41 @@ export async function getBlog(blogId: string): Promise<Blog | null> {
     where: {
       id: blogId,
     },
+    include: {
+      author: {
+        select: {
+          username: true,
+        }
+      },
+      comments: {
+        select: {
+          content: true,
+          postedAt: true,
+          id: true,
+          author: {
+            select: {
+              username: true,
+            }
+          }
+        },
+        orderBy: {
+          postedAt: 'desc',
+        }
+      },
+    },
   });
 
   return blog;
+}
+
+export async function getBlogs(): Promise<Blog[] | null> {
+  const blogs = await prisma.blog.findMany({
+    orderBy: {
+      publishedAt: 'desc',
+    },
+  });
+
+  return blogs;
 }
 
 export async function addComment(args: {

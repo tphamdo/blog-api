@@ -46,7 +46,7 @@ export default function ProfileForm() {
     if (res.ok) {
       const json = await res.json();
       if (json.token) saveToken(json.token);
-      navigate('/protected');
+      navigate('/newBlog');
     } else {
       setError('Invalid Credentials');
     }

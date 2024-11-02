@@ -5,14 +5,17 @@ import * as db from '../db/queries';
 export async function commentPost(req: Request, res: Response): Promise<void> {
   const { content } = req.body;
   const { blogId } = req.params;
-  const authorId = 'e4277c0d-0877-44b0-aa62-0e3c3abf97fc';
+  const authorId = req.user?.id;
   if (!blogId || !authorId || !content) {
-    res.status(400).send('All fields are required.');
+    L.log(blogId);
+    L.log(authorId);
+    L.log(content);
+    res.status(400).json({ message: 'All fields are required.' });
     return;
   }
 
   L.log(req.body);
-  const blog = await db.addComment({ blogId, content, authorId });
-  L.log(blog);
-  res.send('tpham -> blog posted');
+  const comment = await db.addComment({ blogId, content, authorId });
+  if (comment) res.json({ message: 'Comment successfully added!' });
+  else res.json({ message: 'Comment was not added!' });
 }

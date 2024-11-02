@@ -24,7 +24,7 @@ export async function registerPost(req: Request, res: Response): Promise<void> {
 
   const reducedUser = { id: user.id, username: user.username };
   const token = jwt.sign(reducedUser, process.env.PRIVATE_KEY, {
-    expiresIn: process.env.EXPIRES_IN || '60s',
+    expiresIn: process.env.EXPIRES_IN || '1d',
   });
 
   L.log(`${JSON.stringify(user, null, 4)}`);
@@ -55,7 +55,7 @@ export async function loginPost(req: Request, res: Response): Promise<void> {
 
       const reducedUser = { id: user.id, username: user.username };
       const token = jwt.sign(reducedUser, process.env.PRIVATE_KEY, {
-        expiresIn: process.env.EXPIRES_IN || '60s',
+        expiresIn: process.env.EXPIRES_IN || '1d',
       });
 
       L.log(`${JSON.stringify(user, null, 4)}`);

@@ -1,10 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import LoginPage from './LoginPage.tsx'
-import RegisterPage from './RegisterPage.tsx'
+import { loader as blogLoader } from './BlogPage';
+import BlogPage from './BlogPage.tsx'
+import ErrorPage from './ErrorPage.tsx'
 import HomePage from './HomePage.tsx'
-import ProtectedPage from './ProtectedPage.tsx'
+import LoginPage from './LoginPage.tsx'
+import NewBlogPage from './NewBlogPage.tsx'
+import RegisterPage from './RegisterPage.tsx'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -18,8 +21,8 @@ const router = createBrowserRouter([
     element: <HomePage />
   },
   {
-    path: "/protected",
-    element: <ProtectedPage />
+    path: "/newBlog",
+    element: <NewBlogPage />
   },
   {
     path: "/login",
@@ -28,6 +31,12 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />
+  },
+  {
+    path: "/blogs/:blogId",
+    loader: blogLoader,
+    element: <BlogPage />,
+    errorElement: <ErrorPage />
   },
   {
     path: "*",

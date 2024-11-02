@@ -4,7 +4,6 @@ import { createContext, useContext } from "react";
 
 type AuthContextType = {
   saveToken: (newToken: string) => void;
-  // getToken: () => string | null;
   clearToken: () => void;
   isAuth: () => boolean;
 };
@@ -16,10 +15,7 @@ type Props = {
 };
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
-  // const [token, setToken] = useState(localStorage.getItem("jwt"));
-
   const saveToken = (newToken: string | null) => {
-    // setToken(newToken);
     if (newToken) {
       localStorage.setItem('jwt', newToken);
       axios.defaults.headers.common["Authorization"] = "Bearer " + newToken;
@@ -27,13 +23,11 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   };
 
   const clearToken = () => {
-    // setToken(null);
     localStorage.removeItem('jwt');
     delete axios.defaults.headers.common["Authorization"]
   };
 
   const getToken = () => {
-    // setToken(null);
     return localStorage.getItem('jwt');
   };
 
